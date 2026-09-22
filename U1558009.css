@@ -1,0 +1,26 @@
+/* 排版容器 */
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* 圖片基本屬性（必須設定 display: block 或 inline-block，transform 才會生效） */
+.move-img {
+    width: 250px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block; 
+    
+    /* 設定動畫漸變時間 (0.3秒) */
+    transition: all 0.3s ease-in-out;
+}
+
+/* 規則4：滑鼠經過圖片時會放大 + 往上浮動 */
+.move-img:hover {
+    transform: scale(1.15) translateY(-10px); /* 放大 1.15 倍並往上移 10px */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3); /* 加上陰影讓效果更明顯 */
+}
