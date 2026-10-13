@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>萬聖節狂歡 - JavaScript 練習</title>
+
+<!-- 引入外掛庫：發射萬聖節與火焰配色的煙火彩屑 -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+  /* 萬聖節暗黑主題背景 */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(circle at center, #2c003e, #0f0019, #000000);
+    color: #ff9d00;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: background 0.8s ease;
+  }
+
+  /* 萬聖節酷炫標題 */
+  h1 {
+    font-size: 2.8rem;
+    color: #ff7700;
+    text-shadow: 0 0 10px #ff5500, 0 0 20px #ff2200, 0 0 40px #8a2be2;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 10px #ff5500, 0 0 20px #ff2200, 0 0 30px #8a2be2; }
+    to { text-shadow: 0 0 20px #ff9900, 0 0 30px #ff0055, 0 0 50px #9d00ff; }
+  }
+
+  /* 萬聖節酷炫噴火按鈕 */
+  .dragon-btn {
+    position: relative;
+    padding: 18px 45px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff4500, #8a2be2, #ff0055);
+    background-size: 200% 200%;
+    border: 2px solid #ff7700;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.6), 0 0 40px rgba(138, 43, 226, 0.4);
+    outline: none;
+    transition: all 0.3s ease;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  .dragon-btn:hover {
+    transform: scale(1.08) translateY(-3px);
+    box-shadow: 0 0 30px rgba(255, 119, 0, 0.9), 0 0 60px rgba(255, 0, 85, 0.7);
+  }
+
+  .dragon-btn:active {
+    transform: scale(0.95);
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 噴火龍巨型動畫粒子 */
+  .dragon-spirit {
+    position: fixed;
+    font-size: 80px;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0;
+    animation: dragonRoar 1.2s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+  }
+
+  @keyframes dragonRoar {
+    0% {
+      transform: translate(-50%, -50%) scale(0.2) rotate(-20deg);
+      opacity: 0;
+    }
+    40% {
+      transform: translate(-50%, -120%) scale(1.5) rotate(0deg);
+      opacity: 1;
+      filter: drop-shadow(0 0 20px #ff4500);
+    }
+    100% {
+      transform: translate(-50%, -200%) scale(2) rotate(15deg);
+      opacity: 0;
+      filter: drop-shadow(0 0 40px #ff0000);
+    }
+  }
+
+  /* 火焰與萬聖節通用飄散粒子 */
+  .fire-particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 28px;
+    z-index: 9999;
+    animation: fireScatter 1.2s ease-out forwards;
+  }
+
+  @keyframes fireScatter {
+    0% {
+      transform: translate(0, 0) scale(0.8) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--x), var(--y)) scale(1.6) rotate(var(--rot));
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+
+<body onclick="document.body.style.background='#280018'">
+
+<h1>🎃 今天練習的 Java Script 🎃</h1>
+
+<!-- 點擊按鈕觸發噴火龍與萬聖節特效 -->
+<button class="dragon-btn" onclick="sayhi(event)">🐉 加入購物車!! 🔥</button>
+
+<script>
+function sayhi(event) {
+  // 阻止事件冒泡
+  if (event) event.stopPropagation();
+
+  // 1. 召喚巨大的噴火龍動畫
+  spawnDragon(event);
+
+  // 2. 噴發火焰與萬聖節節日粒子 (🔥💥🎃👻🦇)
+  createFireParticles(event);
+
+  // 3. 爆發火焰與萬聖節濃烈配色的煙火彩屑
+  if (typeof confetti === 'function') {
+    confetti({
+      particleCount: 120,
+      spread: 80,
+      colors: ['#ff4500', '#ff8c00', '#ff0055', '#8a2be2', '#ffd700'], // 火焰紅橘與萬聖紫金
+      origin: { 
+        x: event.clientX / window.innerWidth, 
+        y: event.clientY / window.innerHeight 
+      }
+    });
+  }
+
+  // 4. 原本的提示訊息（延遲 300ms 讓龍咆哮與噴火動畫先展現）
+  setTimeout(function() {
+    alert("高個最近迷上看奶豬短片!!so bad..");
+  }, 300);
+}
+
+// 召喚噴火龍頭像動畫
+function spawnDragon(e) {
+  if (!e) return;
+  const dragon = document.createElement('div');
+  dragon.classList.add('dragon-spirit');
+  dragon.innerText = '🐉';
+  dragon.style.left = `${e.clientX}px`;
+  dragon.style.top = `${e.clientY}px`;
+  document.body.appendChild(dragon);
+
+  setTimeout(() => dragon.remove(), 1200);
+}
+
+// 產生火焰與萬聖節飛散粒子
+function createFireParticles(e) {
+  if (!e) return;
+  // 包含火焰、爆發、南瓜、鬼魂與蝙蝠
+  const elements = ['🔥', '💥', '🎃', '👻', '🦇', '🍬', '✨'];
+  const particleCount = 20;
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('fire-particle');
+    particle.innerText = elements[Math.floor(Math.random() * elements.length)];
+    
+    particle.style.left = `${e.clientX - 15}px`;
+    particle.style.top = `${e.clientY - 15}px`;
+    
+    // 向四周擴散的爆炸距離
+    const forceX = (Math.random() - 0.5) * 350;
+    const forceY = (Math.random() - 0.7) * 350; // 偏向上方噴射
+    const randomRot = (Math.random() - 0.5) * 360;
+
+    particle.style.setProperty('--x', `${forceX}px`);
+    particle.style.setProperty('--y', `${forceY}px`);
+    particle.style.setProperty('--rot', `${randomRot}deg`);
+
+    document.body.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 1200);
+  }
+}
+</script>
+
+</body>
+</html>
